@@ -1,26 +1,23 @@
 from pages.login_page import LoginPage
-from faker import Faker
+from testdata import credentials, messages, generators
 
 
-def test_successful_login(driver):
-    login_page = LoginPage(driver)
+def test_successful_login(driver, base_url):
+    login_page = LoginPage(driver, base_url)
     login_page.load()
-    login_page.login("tomsmith", "SuperSecretPassword!")
+    login_page.login(credentials.VALID_USERNAME,credentials.VALID_PASSWORD)
     message = login_page.get_flash_message()
-    assert "You logged into a secure area!" in message
+    assert messages.SUCCESS_LOGIN_MESSAGE in message
 
-
-fake = Faker()
-
-def test_unsuccessful_login(driver):
-    login_page = LoginPage(driver)
+def test_unsuccessful_login(driver,base_url):
+    login_page = LoginPage(driver,base_url)
     login_page.load()
 
     # Rastgele kullanıcı adı ve şifre
-    username = fake.user_name()
-    password = fake.password()
+    username = generators.random_username()
+    password = generators.random_username()
 
     login_page.login(username, password)
     message = login_page.get_flash_message()
 
-    assert "Your username is invalid!" in message
+    assert messages.INVALID_LOGIN_MESSAGE in message
